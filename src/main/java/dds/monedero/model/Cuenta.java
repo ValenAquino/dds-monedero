@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Cuenta {
-
   private double saldo = 0;
   private List<Movimiento> movimientos = new ArrayList<>();
 
@@ -22,42 +21,63 @@ public class Cuenta {
     this.movimientos = movimientos;
   }
 
-  public void poner(double cuanto) { // `cuanto` no es muy descriptivo del rol que cumple
-    if (cuanto <= 0) {
-      throw new MontoNegativoException(cuanto + ": el monto a ingresar debe ser un valor positivo");
-    }
-
-    if (getMovimientos().stream().filter(movimiento -> movimiento.isDeposito()).count() >= 3) {
-      throw new MaximaCantidadDepositosException("Ya excedio los " + 3 + " depositos diarios");
-    }
-
-    // No es muy declarativo lo que está haciendo.
-    // Deberia refactorizarse
-    new Movimiento(LocalDate.now(), cuanto, true).agregateA(this);
+  public void poner(double monto) {
+    this.validarIngresoDeMonto(monto);
+    this.agregarMovimiento(LocalDate.now(), monto, true);
   }
 
-  public void sacar(double cuanto) { // otra vez `cuanto`. Se podría utilizar `monto`
-    if (cuanto <= 0) {
-      throw new MontoNegativoException(cuanto + ": el monto a ingresar debe ser un valor positivo");
+  public void validarIngresoDeMonto(double monto) {
+    this.montoIngresoNegativo(monto);
+    this.excedeIngresoDiario(monto);
+  }
+
+  public void montoIngresoNegativo(double monto) {
+    if (monto <= 0) {
+      throw new MontoNegativoException(monto + ": el monto a ingresar debe ser un valor positivo");
     }
-    if (getSaldo() - cuanto < 0) {
+  }
+
+  public void excedeIngresoDiario(double monto) {
+    if (getMovimientos().stream().filter(Movimiento::isDeposito).count() >= 3) {
+      throw new MaximaCantidadDepositosException("Ya excedio los " + 3 + " depositos diarios");
+    }
+  }
+  
+  public void sacar(double monto) {
+    this.validarEgresoDeMonto(monto);
+    new Movimiento(LocalDate.now(), monto, false).agregateA(this);
+  }
+
+  public void validarEgresoDeMonto(double monto) {
+    this.montoEgresoNegativo(monto);
+    this.elMontoExcedeElSaldo(monto);
+    this.excedeEgresoDiario(monto);
+  }
+
+  public void montoEgresoNegativo(double monto) {
+    if (getSaldo() - monto < 0) {
       throw new SaldoMenorException("No puede sacar mas de " + getSaldo() + " $");
     }
+  }
 
-    // Este chequeo se podría abstraer a otro método
+  public void elMontoExcedeElSaldo(double monto) {
+    if (getSaldo() - monto < 0) {
+      throw new SaldoMenorException("No puede sacar mas de " + getSaldo() + " $");
+    }
+  }
+
+  public void excedeEgresoDiario(double monto) {
     double montoExtraidoHoy = getMontoExtraidoA(LocalDate.now());
     double limite = 1000 - montoExtraidoHoy;
-    if (cuanto > limite) {
+
+    if (monto > limite) {
       throw new MaximoExtraccionDiarioException("No puede extraer mas de $ " + 1000
           + " diarios, límite: " + limite);
     }
-
-    // poco declarativo
-    new Movimiento(LocalDate.now(), cuanto, false).agregateA(this);
   }
 
-  public void agregarMovimiento(LocalDate fecha, double cuanto, boolean esDeposito) {
-    Movimiento movimiento = new Movimiento(fecha, cuanto, esDeposito);
+  public void agregarMovimiento(LocalDate fecha, double monto, boolean esDeposito) {
+    Movimiento movimiento = new Movimiento(fecha, monto, esDeposito);
     movimientos.add(movimiento);
   }
 
