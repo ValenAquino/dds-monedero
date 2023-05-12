@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+// Nombre de los tests poco declarativos
+// Y en muchos faltan asserts
 public class MonederoTest {
   private Cuenta cuenta;
 
