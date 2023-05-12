@@ -11,12 +11,8 @@ import java.util.List;
 
 public class Cuenta {
 
-  private double saldo = 0; // (1) Se inicializa en 0 acá y en el primer constructor
+  private double saldo = 0;
   private List<Movimiento> movimientos = new ArrayList<>();
-
-  public Cuenta() {
-    saldo = 0; // (1)
-  }
 
   public Cuenta(double montoInicial) {
     saldo = montoInicial;
