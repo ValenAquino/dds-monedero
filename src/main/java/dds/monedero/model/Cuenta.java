@@ -23,13 +23,13 @@ public class Cuenta {
 
   public void poner(double monto) {
     this.validarIngresoDeMonto(monto);
-    this.setSaldo(this.getSaldo() + monto);
+    this.saldo += monto;
     this.agregarMovimiento(LocalDate.now(), monto, true);
   }
 
   public void sacar(double monto) {
     this.validarEgresoDeMonto(monto);
-    this.setSaldo(this.getSaldo() - monto);
+    this.saldo -= monto;
     this.agregarMovimiento(LocalDate.now(), monto, false);
   }
 
