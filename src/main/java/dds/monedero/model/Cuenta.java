@@ -26,6 +26,11 @@ public class Cuenta {
     this.agregarMovimiento(LocalDate.now(), monto, true);
   }
 
+  public void sacar(double monto) {
+    this.validarEgresoDeMonto(monto);
+    this.agregarMovimiento(LocalDate.now(), monto, false);
+  }
+
   public void validarIngresoDeMonto(double monto) {
     this.montoIngresoNegativo(monto);
     this.excedeIngresoDiario(monto);
@@ -41,11 +46,6 @@ public class Cuenta {
     if (getMovimientos().stream().filter(Movimiento::isDeposito).count() >= 3) {
       throw new MaximaCantidadDepositosException("Ya excedio los " + 3 + " depositos diarios");
     }
-  }
-  
-  public void sacar(double monto) {
-    this.validarEgresoDeMonto(monto);
-    new Movimiento(LocalDate.now(), monto, false).agregateA(this);
   }
 
   public void validarEgresoDeMonto(double monto) {
