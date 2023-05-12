@@ -43,13 +43,4 @@ public class Movimiento {
   public boolean isExtraccion() {
     return !esDeposito;
   }
-
-  // Debería tener metodos separados para al menos abstraer un poco
-  public double calcularValor(Cuenta cuenta) {
-    if (esDeposito) {
-      return cuenta.getSaldo() + getMonto();
-    } else {
-      return cuenta.getSaldo() - getMonto();
-    }
-  }
 }
