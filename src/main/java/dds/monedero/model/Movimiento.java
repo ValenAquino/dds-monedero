@@ -44,12 +44,6 @@ public class Movimiento {
     return !esDeposito;
   }
 
-  // Esto genera un acoplamiento innecesario entre `Movimiento` y `Cuenta`
-  public void agregateA(Cuenta cuenta) {
-    cuenta.setSaldo(calcularValor(cuenta));
-    cuenta.agregarMovimiento(fecha, monto, esDeposito);
-  }
-
   // Debería tener metodos separados para al menos abstraer un poco
   public double calcularValor(Cuenta cuenta) {
     if (esDeposito) {
