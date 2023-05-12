@@ -11,11 +11,11 @@ import java.util.List;
 
 public class Cuenta {
 
-  private double saldo = 0;
+  private double saldo = 0; // (1) Se inicializa en 0 acá y en el primer constructor
   private List<Movimiento> movimientos = new ArrayList<>();
 
   public Cuenta() {
-    saldo = 0;
+    saldo = 0; // (1)
   }
 
   public Cuenta(double montoInicial) {
@@ -26,7 +26,7 @@ public class Cuenta {
     this.movimientos = movimientos;
   }
 
-  public void poner(double cuanto) {
+  public void poner(double cuanto) { // `cuanto` no es muy descriptivo del rol que cumple
     if (cuanto <= 0) {
       throw new MontoNegativoException(cuanto + ": el monto a ingresar debe ser un valor positivo");
     }
@@ -35,22 +35,28 @@ public class Cuenta {
       throw new MaximaCantidadDepositosException("Ya excedio los " + 3 + " depositos diarios");
     }
 
+    // No es muy declarativo lo que está haciendo.
+    // Deberia refactorizarse
     new Movimiento(LocalDate.now(), cuanto, true).agregateA(this);
   }
 
-  public void sacar(double cuanto) {
+  public void sacar(double cuanto) { // otra vez `cuanto`. Se podría utilizar `monto`
     if (cuanto <= 0) {
       throw new MontoNegativoException(cuanto + ": el monto a ingresar debe ser un valor positivo");
     }
     if (getSaldo() - cuanto < 0) {
       throw new SaldoMenorException("No puede sacar mas de " + getSaldo() + " $");
     }
+
+    // Este chequeo se podría abstraer a otro método
     double montoExtraidoHoy = getMontoExtraidoA(LocalDate.now());
     double limite = 1000 - montoExtraidoHoy;
     if (cuanto > limite) {
       throw new MaximoExtraccionDiarioException("No puede extraer mas de $ " + 1000
           + " diarios, límite: " + limite);
     }
+
+    // poco declarativo
     new Movimiento(LocalDate.now(), cuanto, false).agregateA(this);
   }
 
